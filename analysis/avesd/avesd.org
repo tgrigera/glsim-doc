@@ -1,3 +1,11 @@
+# This file is part of glsim-doc
+#
+# Copyright (C) 2015 by Tomas S. Grigera <tgrigera@iflysib.unlp.edu.ar>
+#
+# glsim-doc is licensed under the Creative Commons
+# Attribution-NonCommercial-ShareAlike 4.0 International License
+# (http://creativecommons.org/licenses/by-nc-sa/4.0/).
+
 
 * Average and variance
 
@@ -15,7 +23,7 @@ as the corrected two-pass algorithm given by Numerical Recipes.
 
 Below we test our implementation with three datasets provided by [[http://www.nist.gov][NIST]]
 (the Statistical Reference Datasets for [[http://www.itl.nist.gov/div898/strd/univ/homepage.html][univariate summary
-statistics]]).
+statistics]]) [fn:1].
 
 ** gs_avesd
 
@@ -169,4 +177,14 @@ gs_columnave results:
 ave: 10000000.2 
 sd: 0.1000000006 
 #+end_example
+
+
+* Footnotes
+
+[fn:1] The files ~Numacc1.dat~, ~NumAcc2.dat~ and ~NumAcc4.dat~ are
+redistributed verbatim from NIST's website (accessed July 14, 2015)
+and are not covered by ~glsim-doc~ license but considered public
+information according to NIST's [[http://www.nist.gov/public_affairs/disclaimer.cfm][disclaimer]].
+
+
 

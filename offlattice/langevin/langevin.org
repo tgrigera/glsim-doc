@@ -1,3 +1,11 @@
+# This file is part of glsim-doc
+#
+# Copyright (C) 2015 by Tomas S. Grigera <tgrigera@iflysib.unlp.edu.ar>
+#
+# glsim-doc is licensed under the Creative Commons
+# Attribution-NonCommercial-ShareAlike 4.0 International License
+# (http://creativecommons.org/licenses/by-nc-sa/4.0/).
+
 
 * Langevin dynamics
 
@@ -29,7 +37,6 @@ The parameter file was
 
   [LD]
   T=1.5
-  #eta=1e-2
 
   [stochastic]
   random_number_generator=gsl_rng_mt19937
@@ -56,24 +63,31 @@ temperature is reached, though at times that are longer the lower the
 $\eta$.
 
 #+begin_src sh :eval never
-GS_ljld --LD.eta=1 langevin.ini +++ _eta1_000 -c ../MC/conf512_T=0.2_000.dat
-GS_ljld --LD.eta=1e-2 langevin.ini +++ _eta1e-2_000 -c ../MC/conf512_T=0.2_000.dat
-GS_ljld --LD.eta=1e-4 langevin.ini +++ _eta1e-4_000 -c ../MC/conf512_T=0.2_000.dat
-GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_000 _etae1-4_001
-GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_001 _etae1-4_002
-GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_002 _etae1-4_003
-GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_003 _etae1-4_004
-GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_004 _etae1-4_005
-GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_005 _etae1-4_006
-GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_006 _etae1-4_007
-GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_007 _etae1-4_008
-GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_008 _etae1-4_009
-GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_009 _etae1-4_010
-GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_010 _etae1-4_011
-GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_011 _etae1-4_012
-GS_ljld --LD.eta=1e-4 --MD.steps=1000000 langevin.ini _eta1e-4_003 _etae1-4_004
-GS_ljld --LD.eta=0 langevin.ini +++ _eta0_000 -c ../MC/conf512_T=0.2_000.dat
+gs_ljld --LD.eta=1 langevin.ini +++ _eta1_000 -c ../MC/conf512_T=0.2_000.dat
+gs_ljld --LD.eta=1 langevin.ini _eta1_000 _eta1_001
+gs_ljld --LD.eta=1e-2 langevin.ini +++ _eta1e-2_000 -c ../MC/conf512_T=0.2_000.dat
+gs_ljld --LD.eta=1e-2 langevin.ini _eta1e-2_000 _eta1e-2_001
+gs_ljld --LD.eta=1e-4 langevin.ini +++ _eta1e-4_000 -c ../MC/conf512_T=0.2_000.dat
+gs_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_000 _etae1-4_001
+gs_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_001 _etae1-4_002
+gs_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_002 _etae1-4_003
+gs_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_003 _etae1-4_004
+gs_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_004 _etae1-4_005
+gs_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_005 _etae1-4_006
+gs_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_006 _etae1-4_007
+gs_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_007 _etae1-4_008
+gs_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_008 _etae1-4_009
+gs_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_009 _etae1-4_010
+gs_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_010 _etae1-4_011
+gs_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_011 _etae1-4_012
+gs_ljld --LD.eta=1e-4 --MD.steps=1000000 langevin.ini _eta1e-4_003 _etae1-4_004
+gs_ljld --LD.eta=0 langevin.ini +++ _eta0_000 -c ../MC/conf512_T=0.2_000.dat
 #+end_src
+
+*** Kinetic temperature
+
+We plot the evolution of temperature (as computed by equipartition
+from the kinetic energy).
 
 #+name: temperature-time-eta
 #+begin_src gnuplot :file temp-time-eta.png
@@ -83,7 +97,9 @@ set xlabel "time"
 set ylabel "Temperature"
 plot [] [0.5:2] \
      "ener_eta1_000.dat" u 2:9 w l lt 1 title "eta=1", \
+     "ener_eta1_001.dat" u 2:9 w l lt 1 not, \
      "ener_eta1e-2_000.dat" u 2:9 w l lt 2 title "eta=1e-2", \
+     "ener_eta1e-2_001.dat" u 2:9 w l lt 2 not, \
      "ener_eta0_000.dat" u 2:9 w l lt 4 title "eta=0", \
      1.5 not
 #+end_src
@@ -117,6 +133,35 @@ plot [] [0.5:2] \
 
 #+RESULTS: temperature-time-eta-low-eta
 [[file:temp-time-eta-low-eta.png]]
+
+#+name: langevin-average-kinetic-temperature
+#+begin_src sh :results scalar
+PATH=$PATH:$HOME/local/bin
+do_ave() {
+gawk '/#/ {next} {print $9}' $* | gs_avesd
+}
+do_ave ener_eta1_001.dat
+do_ave ener_eta1e-2_001.dat
+do_ave ener_eta1e-4_011.dat ener_eta1e-4_012.dat
+#+end_src
+
+#+RESULTS: langevin-average-kinetic-temperature
+#+begin_example
+# Average from standard input
+#
+#       Average        Variance    StdDeviation  Nsamples
+       1.518857  0.003010171637   0.05486503109      2000
+# Average from standard input
+#
+#       Average        Variance    StdDeviation  Nsamples
+      1.5153925  0.003046349619   0.05519374619      2000
+# Average from standard input
+#
+#       Average        Variance    StdDeviation  Nsamples
+      1.5071447  0.001492443684   0.03863215868     20000
+#+end_example
+
+*** Energy
 
 Finally we compare the evolution of the total energy.
 
