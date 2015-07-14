@@ -1,0 +1,138 @@
+
+* Langevin dynamics
+
+Langevin dynamics means Newton's equations plus noise (i.e. Langevin
+dynamics with mass).
+
+** Langevin dynamics of repulsive Lennard-Jones particles
+
+A system of 512 repulsive Lennard-Jones particles was cooled from
+infinite temperature by doing 1e4 Monte Carlos steps at T=0.2.  Then
+Langevin dynamics runs where started, with a bath temperature of T=1.5
+and different values of friction.
+
+The parameter file was
+
+#+name: langevin.ini
+#+begin_src conf :tangle langevin.ini
+  configuration_file_prefix=conf
+  environment_file_prefix=env
+  title="LJ test"
+  max_steps=0
+  log_interval=100
+
+  [MD]
+  steps=200000
+  time_step=0.005
+  obs_file_prefix=ener
+  obs_interval=100
+
+  [LD]
+  T=1.5
+  #eta=1e-2
+
+  [stochastic]
+  random_number_generator=gsl_rng_mt19937
+  seed=39221
+
+  [trajectory]
+  obs_interval=0
+  file_prefix=traj
+  record_type=false
+  record_flags=false
+  record_r=true
+  record_v=false
+  record_a=false
+
+  [RLJ]
+  sigma=1
+  epsilon=1
+  mass=1
+#+end_src
+
+We did runs with $\eta=1$, $1^{-2}$, $1^{-4}$ and $\eta=0$
+(i.e. conservative Newtonian dynamics).  When $\eta>0$, the bath
+temperature is reached, though at times that are longer the lower the
+$\eta$.
+
+#+begin_src sh
+GS_ljld --LD.eta=1 langevin.ini +++ _eta1_000 -c ../MC/conf512_T=0.2_000.dat
+GS_ljld --LD.eta=1e-2 langevin.ini +++ _eta1e-2_000 -c ../MC/conf512_T=0.2_000.dat
+GS_ljld --LD.eta=1e-4 langevin.ini +++ _eta1e-4_000 -c ../MC/conf512_T=0.2_000.dat
+GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_000 _etae1-4_001
+GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_001 _etae1-4_002
+GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_002 _etae1-4_003
+GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_003 _etae1-4_004
+GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_004 _etae1-4_005
+GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_005 _etae1-4_006
+GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_006 _etae1-4_007
+GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_007 _etae1-4_008
+GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_008 _etae1-4_009
+GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_009 _etae1-4_010
+GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_010 _etae1-4_011
+GS_ljld --LD.eta=1e-4 langevin.ini _eta1e-4_011 _etae1-4_012
+GS_ljld --LD.eta=1e-4 --MD.steps=1000000 langevin.ini _eta1e-4_003 _etae1-4_004
+GS_ljld --LD.eta=0 langevin.ini +++ _eta0_000 -c ../MC/conf512_T=0.2_000.dat
+#+end_src
+
+#+name: temperature-time-eta
+#+begin_src gnuplot :file temp-time-eta.png
+reset
+set title "Temperature (from kinetic energy) vs. time"
+set xlabel "time"
+set ylabel "Temperature"
+plot [] [0.5:2] \
+     "ener_eta1_000.dat" u 2:9 w l lt 1 title "eta=1", \
+     "ener_eta1e-2_000.dat" u 2:9 w l lt 2 title "eta=1e-2", \
+     "ener_eta0_000.dat" u 2:9 w l lt 4 title "eta=0", \
+     1.5 not
+#+end_src
+
+#+RESULTS: temperature-time-eta
+[[file:temp-time-eta.png]]
+
+
+#+name: temperature-time-eta-low-eta
+#+begin_src gnuplot :file temp-time-eta-low-eta.png
+reset
+set title "Temperature (from kinetic energy) vs. time"
+set xlabel "time"
+set ylabel "Temperature"
+plot [] [0.5:2] \
+     "ener_eta1e-4_000.dat" u 2:9 w l lt 2 title "eta=1e-4", \
+     "ener_eta1e-4_001.dat" u 2:9 w l lt 2 not, \
+     "ener_eta1e-4_002.dat" u 2:9 w l lt 2 not, \
+     "ener_eta1e-4_003.dat" u 2:9 w l lt 2 not, \
+     "ener_eta1e-4_004.dat" u 2:9 w l lt 2 not, \
+     "ener_eta1e-4_005.dat" u 2:9 w l lt 2 not, \
+     "ener_eta1e-4_006.dat" u 2:9 w l lt 2 not, \
+     "ener_eta1e-4_007.dat" u 2:9 w l lt 2 not, \
+     "ener_eta1e-4_008.dat" u 2:9 w l lt 2 not, \
+     "ener_eta1e-4_009.dat" u 2:9 w l lt 2 not, \
+     "ener_eta1e-4_010.dat" u 2:9 w l lt 2 not, \
+     "ener_eta1e-4_011.dat" u 2:9 w l lt 2 not, \
+     "ener_eta1e-4_012.dat" u 2:9 w l lt 2 not, \
+     1.5 not lt 1
+#+end_src
+
+#+RESULTS: temperature-time-eta-low-eta
+[[file:temp-time-eta-low-eta.png]]
+
+Finally we compare the evolution of the total energy.
+
+#+name: energy-time-eta
+#+begin_src gnuplot :file energy-time-eta.png
+reset
+set title "Total energy vs. time"
+set xlabel "time"
+set ylabel "Energy"
+plot \
+     "ener_eta1_000.dat" u 2:8 w l title "eta=1", \
+     "ener_eta1e-2_000.dat" u 2:8 w l title "eta=1e-2", \
+     "ener_eta1e-4_000.dat" u 2:8 w l title "eta=1e-4", \
+     "ener_eta0_000.dat" u 2:8 w l title "eta=0"
+#+end_src
+
+#+RESULTS: energy-time-eta
+[[file:energy-time-eta.png]]
+

@@ -1,0 +1,6 @@
+
+These are examples, code snippets, results and documentation regarding
+~glsim~.
+
+ * 
+
