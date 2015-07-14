@@ -1,0 +1,172 @@
+
+* Average and variance
+
+To compute average, variance and standard deviation we use a
+recurrence formula I found buried in a TODO in the GNU Scientific
+Library source, attributed to D.\ H.\ D.~West, Updating mean and
+variance estimates: an improved method, Comm ACM {\bf 22(9),} 532
+(1979).  The recurrence for the mean is
+
+$$ \overline{X}_N = \overline{X}_{N-1} + \frac{1}{N}(x_i -
+\overline{X}_{N-1} ). $$
+
+This requires only a single pass through the data but performs as well
+as the corrected two-pass algorithm given by Numerical Recipes.
+
+Below we test our implementation with three datasets provided by [[http://www.nist.gov][NIST]]
+(the Statistical Reference Datasets for [[http://www.itl.nist.gov/div898/strd/univ/homepage.html][univariate summary
+statistics]]).
+
+** gs_avesd
+
+~gs_avesd~ is a C++ utility that uses the above formulae.  It can read
+ASCII or binary data from standard input or multiple files.  It is
+however not great at parsing different formats, so it usually needs
+some pre-processing with =awk=, =grep= or =cut= as in the example
+below.
+
+#+name: avesd-test
+#+begin_src sh :results scalar
+  PATH=$PATH:$HOME/local/bin
+  process_dataset() {
+      echo "Dataset: $1"
+      head -17 $1 | tail -8 | tr -d \\r 
+      echo " "
+      echo "gs_avesd results:"
+      egrep -v "^#" $1 | tr -d ' ' | gs_avesd
+  }
+  process_dataset NumAcc1.dat
+  echo " "
+  process_dataset NumAcc2.dat
+  echo " "
+  process_dataset NumAcc4.dat
+#+end_src
+
+#+RESULTS: avesd-test
+#+begin_example
+Dataset: NumAcc1.dat
+# Description:   This is a constructed/fabricated data set
+#                to test accuracy in summary statistic calculations.
+#                The numbers are large (8-digit integers) and
+#                differ only in the last decimal place.
+#                Note--by construction, this data set has
+#                      sample mean                  = 10000002 (exact)
+#                      sample standard deviation    =        1 (exact)
+#                      sample autocorrelation coef. =     -0.5 (exact)
+ 
+gs_avesd results:
+# Average from standard input
+#
+#       Average        Variance    StdDeviation  Nsamples
+       10000002               1               1         3
+ 
+Dataset: NumAcc2.dat
+# Description:   This is a constructed/fabricated data set
+#                to test accuracy in summary statistic calculations.
+#                The numbers are 2-digit floating point values and
+#                differ only in the last decimal place.
+#                Note--by construction, this data set has
+#                      sample mean                  =  1.2   (exact)
+#                      sample standard deviation    =  0.1   (exact)
+#                      sample autocorrelation coef. = -0.999 (exact)
+ 
+gs_avesd results:
+# Average from standard input
+#
+#       Average        Variance    StdDeviation  Nsamples
+            1.2            0.01             0.1      1001
+ 
+Dataset: NumAcc4.dat
+# Description:   This is a constructed/fabricated data set
+#                to test accuracy in summary statistic calculations.
+#                The numbers are 9-digit floating point values and
+#                differ only in the last decimal place.
+#                      sample mean            =  10000000.2   (exact)
+#                      sample standard dev.   =         0.1   (exact)
+#                      sample autocorr. coef. =      -0.999   (exact)
+
+ 
+gs_avesd results:
+# Average from standard input
+#
+#       Average        Variance    StdDeviation  Nsamples
+     10000000.2   0.01000000011    0.1000000006      1001
+#+end_example
+
+** gs_columnave
+
+~gs_columnave~ is an AWK implementation of the above, and operates on
+all the columns of the file independently.  It is good at parsing
+thanks to AWK's capabilities.
+
+#+name: gs_columnave-test
+#+begin_src sh :results scalar
+  PATH=$PATH:$HOME/local/bin
+  process_dataset() {
+      echo "Dataset: $1"
+      head -17 $1 | tail -8 | tr -d \\r 
+      echo " "
+      echo "gs_columnave results:"
+      egrep -v "^#" $1 | tr -d ' ' | gs_columnave.awk -sd
+  }
+  process_dataset NumAcc1.dat
+  echo " "
+  process_dataset NumAcc2.dat
+  echo " "
+  process_dataset NumAcc4.dat
+#+end_src
+
+#+RESULTS: gs_columnave-test
+#+begin_example
+Dataset: NumAcc1.dat
+# Description:   This is a constructed/fabricated data set
+#                to test accuracy in summary statistic calculations.
+#                The numbers are large (8-digit integers) and
+#                differ only in the last decimal place.
+#                Note--by construction, this data set has
+#                      sample mean                  = 10000002 (exact)
+#                      sample standard deviation    =        1 (exact)
+#                      sample autocorrelation coef. =     -0.5 (exact)
+ 
+gs_columnave results:
+# gs_columnave.awk: averages using the following files:
+#
+# Nsamples = 3
+ave: 10000002 
+sd: 1 
+ 
+Dataset: NumAcc2.dat
+# Description:   This is a constructed/fabricated data set
+#                to test accuracy in summary statistic calculations.
+#                The numbers are 2-digit floating point values and
+#                differ only in the last decimal place.
+#                Note--by construction, this data set has
+#                      sample mean                  =  1.2   (exact)
+#                      sample standard deviation    =  0.1   (exact)
+#                      sample autocorrelation coef. = -0.999 (exact)
+ 
+gs_columnave results:
+# gs_columnave.awk: averages using the following files:
+#
+# Nsamples = 1001
+ave: 1.2 
+sd: 0.1 
+ 
+Dataset: NumAcc4.dat
+# Description:   This is a constructed/fabricated data set
+#                to test accuracy in summary statistic calculations.
+#                The numbers are 9-digit floating point values and
+#                differ only in the last decimal place.
+#                      sample mean            =  10000000.2   (exact)
+#                      sample standard dev.   =         0.1   (exact)
+#                      sample autocorr. coef. =      -0.999   (exact)
+#
+ 
+gs_columnave results:
+# gs_columnave.awk: averages using the following files:
+#
+# Nsamples = 1001
+ave: 10000000.2 
+sd: 0.1000000006 
+#+end_example
+

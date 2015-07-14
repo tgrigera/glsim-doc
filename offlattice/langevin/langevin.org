@@ -55,7 +55,7 @@ We did runs with $\eta=1$, $1^{-2}$, $1^{-4}$ and $\eta=0$
 temperature is reached, though at times that are longer the lower the
 $\eta$.
 
-#+begin_src sh
+#+begin_src sh :eval never
 GS_ljld --LD.eta=1 langevin.ini +++ _eta1_000 -c ../MC/conf512_T=0.2_000.dat
 GS_ljld --LD.eta=1e-2 langevin.ini +++ _eta1e-2_000 -c ../MC/conf512_T=0.2_000.dat
 GS_ljld --LD.eta=1e-4 langevin.ini +++ _eta1e-4_000 -c ../MC/conf512_T=0.2_000.dat
