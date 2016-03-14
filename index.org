@@ -11,11 +11,18 @@
 This sections includes documentation / sample use of the analysis
 tools and complete simulation programs included in ~glsim~.
 
- * Offlattice
+** Offlattice
 
    - [[file:offlattice/langevin/langevin.org][Langevin and Brownian dynamics]]
 
- * Analysis tools
+** Analysis tools
 
    - [[file:analysis/avesd/avesd.org][Average and variance]] of a dataset
+
+
+* Algorithms
+
+** Nearest neighbours
+
+ - [[file:alogrithm/neighbours/metric.org][Metric nearest neighbours]]
 
