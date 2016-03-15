@@ -1,10 +1,27 @@
 # This file is part of glsim-doc
 #
-# Copyright (C) 2015 by Tomas S. Grigera <tgrigera@iflysib.unlp.edu.ar>
+# Copyright (C) 2015, 2016 by Tomas S. Grigera <tgrigera@iflysib.unlp.edu.ar>
 #
 # glsim-doc is licensed under the Creative Commons
 # Attribution-NonCommercial-ShareAlike 4.0 International License
 # (http://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+
+* Library overview and tutorial
+
+WIP
+
+
+* Algorithms and specific library components
+
+This includes comments and illustration of specific useful algorithms
+implemented by the library (included in a class or set of classes),
+with examples of use.
+
+** Nearest neighbours
+
+ - [[file:alogrithm/neighbours/metric.org][Metric nearest neighbours]]
+  
 
 * Complete simulations and command line tools
 
@@ -18,11 +35,4 @@ tools and complete simulation programs included in ~glsim~.
 ** Analysis tools
 
    - [[file:analysis/avesd/avesd.org][Average and variance]] of a dataset
-
-
-* Algorithms
-
-** Nearest neighbours
-
- - [[file:alogrithm/neighbours/metric.org][Metric nearest neighbours]]
 

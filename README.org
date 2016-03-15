@@ -5,10 +5,19 @@ The ~glsim-doc~ project aims to reunite documentation, examples, code
 snippets, and short discussions on simulation techniques regarding
 the [[https://github.com/tgrigera/glsim][glsim]] library and tools.
 
+The source files are in Emacs =org-mode= format, that, among other
+things, allows easy mixing of text and code, and in-place evaluation
+of code, and supports markup, cross-references and citations.  HTML
+and PDF files can be generated from =org-mode= sources; addition of a
+script to automate this process is planned.
+
+To read the documentation, start from the [[file:index.org][index]] file.
+
 
 * Copyright statement and licensing terms
 
-glsim-doc is copyright (C) 2015 by Tomas S. Grigera (tgrigera@iflysib.unlp.edu.ar).
+glsim-doc is copyright (C) 2015, 2016 by Tomás S. Grigera
+(tgrigera@iflysib.unlp.edu.ar).
 
 glsim-doc is licensed under the Creative Commons
 Attribution-NonCommercial-ShareAlike 4.0 International License.  To

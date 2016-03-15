@@ -33,9 +33,50 @@ function for pairs within the cutoff.
 * Usage of nearest-neighbour classes
 
 An appropriate object must be created, providing the cutoff radius
-plus one tolerance parameter, which meaning is algorithm dependent and
-controls how often the underlying structures will have to be rebuild
-(see [[#algorithms]]).
+plus one optional tolerance parameter, which meaning is algorithm
+dependent and controls how often the underlying structures will have
+to be rebuild (see [[#algorithms]] for details).  Once created, the
+~rebuild()~ method builds the internal data structures from scratch,
+given a configuration.  With default parameters, you would create a
+nearest neighbour object and initialise it like this:
+
+#+name: create-generic
+#+begin_src C++
+// Create the nearest neighbour object
+glsim::NeighbourList_subcells NN(rc);
+
+glsim::OLconfiguration conf;
+// read or create the configuration
+
+// Initialise NN with
+NN.rebuild(conf);
+// or
+NN.rebuild(conf,rcnew); // if you wish to reset the cutoff
+#+end_src
+
+After the call to ~rebuild()~, the ~NN~ object is ready to be used to
+loop through (candidate) pairs as shown below.  If the configuration
+changes, you must warn the object by calling ~update()~, which takes
+an argument indicating the maximum distance a single particle was
+moved since the last call to ~update()~ or ~rebuild()~.  The support
+structures will be updated or rebuilt from scratch as necessary
+(depending on the underlying algorithm), and the object will be ready
+to loop over pairs again:
+
+#+name: update-generic
+#+begin_src C++
+NN.rebuild(conf);
+for (int i=0; i<STEPS; ++i) {
+  // loop over pairs as explained below, compute e.g. forces
+  <<...>>
+  // update configuration
+  << ... >>
+  // maxdisp now holds the maximum of the distance each particle was displaced
+  NN.update(maxdisp);
+}
+#+end_src
+
+** Looping over pairs or neighbours
 
 You can loop over candidate pairs generically like this:
 
@@ -54,7 +95,7 @@ You can loop over candidate pairs generically like this:
   }
 #+end_src
 
-However, if you will loop over /all/ pairs, it may be more efficiento
+However, if you will loop over /all/ pairs, it may be more efficient
 to use ~for_each_pair~:
 
 #+name: loop-with-for-each
@@ -200,7 +241,7 @@ reproducible differences in favour of ad-hoc looping through
 ~for_each_pair~).
 
 #+name: time-naive
-#+header: :results output raw
+#+header: :results output raw :exports results
 #+begin_src sh
 time_algo()
 {
@@ -228,7 +269,7 @@ time_algo 5000
 
 
 #+name: time-list-naive
-#+header: :results output raw
+#+header: :results output raw :exports results
 #+begin_src sh
 time_algo()
 {
@@ -316,7 +357,7 @@ time_algo 20000
 |   500 |                0 |            0 |           0 |
 |  1000 |                0 |            0 |           0 |
 |  2000 |             0.09 |         0.08 |        0.08 |
-|  5000 |             0.22 |          0.2 |        0.19 |
-| 10000 |             0.47 |         0.39 |         0.4 |
-| 20000 |             0.75 |         0.78 |         0.8 |
+|  5000 |             0.22 |          0.2 |        0.22 |
+| 10000 |             0.47 |         0.41 |        0.42 |
+| 20000 |             0.75 |          0.8 |        0.84 |
 
