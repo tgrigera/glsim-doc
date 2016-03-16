@@ -17,7 +17,7 @@ common interface.  The common aim of these algorithms is to reduce the
 (very large) time that it takes to examine all $N(N-1)/2$ pairs to
 check whether their distance lies within the cutoff.
 
-Algorithms for nearest neighbours are to be thoght as providing
+Algorithms for nearest neighbours are to be thought of as providing
 /candidates/.  For most algorithms here, pairs returned are *not*
 guaranteed to be within cutoff.  Thus the user must loop over the
 pairs returned and check their distance, as if it were a loop over all
@@ -96,7 +96,18 @@ You can loop over candidate pairs generically like this:
 #+end_src
 
 However, if you will loop over /all/ pairs, it may be more efficient
-to use ~for_each_pair~:
+to use ~for_each_pair~.  This function calls a given function
+accepting as arguments two integers identifying the members of the
+pair and a ~double~ giving the pair's squared distance.  The function
+is *only* called for pairs strictly within cutoff (as opposed to the
+iterator-like interface that returns candidates, you don't need an
+extra ~if~ in your function to check the distance).
+
+The function is a template, which is specialised for some neighbour
+classes (like ~Subcell~), where speed gains are possible by looping
+using the internal structures directly rather than through the generic
+iterators (see the [[#benchmarks][benchmarks]] below).  Use ~for_each_pair()~ as
+follows:
 
 #+name: loop-with-for-each
 #+begin_src C++
@@ -113,7 +124,7 @@ to use ~for_each_pair~:
   }
 #+end_src
 
-Or under =C++11=, using lambdas:
+Or, under =C++11=, with a lambda:
 
 #+name: loop-with-for-each-lambda
 #+begin_src C++
@@ -227,6 +238,9 @@ glsim::NeighbourList_subcells create_nl_subcell(glsim::OLconfiguration &conf,dou
 
 
 * Benchmarks
+  :PROPERTIES:
+  :CUSTOM_ID: benchmarks
+  :END:
 
 Here are some comparisons of the time it takes to loop ten times over
 all pairs of a random configuration of various sizes.  You should
@@ -258,14 +272,15 @@ time_algo 2000
 time_algo 5000
 #+end_src
 
+#+CAPTION: Timings (in seconds) for the naive algorithm
 #+RESULTS: time-naive
 |    N | Build structures | Loop generic | Loop ad hoc |
 |  100 |                0 |            0 |           0 |
-|  200 |                0 |         0.01 |        0.01 |
-|  500 |                0 |         0.06 |        0.06 |
-| 1000 |                0 |         0.23 |        0.23 |
-| 2000 |                0 |          0.9 |        0.88 |
-| 5000 |                0 |         5.54 |        5.37 |
+|  200 |                0 |            0 |           0 |
+|  500 |                0 |            0 |           0 |
+| 1000 |                0 |            0 |           0 |
+| 2000 |                0 |            0 |           0 |
+| 5000 |                0 |            0 |           0 |
 
 
 #+name: time-list-naive
@@ -300,7 +315,7 @@ time_algo 20000
 | 20000 |             8.88 |         0.87 |        0.88 |
 
 #+name: time-subcell
-#+header: :results output raw
+#+header: :results output raw :exports results :eval no-export
 #+begin_src sh
 time_algo()
 {
@@ -319,16 +334,8 @@ time_algo 10000
 time_algo 20000
 #+end_src
 
+#+CAPTION: Timings (in seconds) for the subcell algorithm
 #+RESULTS: time-subcell
-|     N | Build structures | Loop generic | Loop ad hoc |
-|   100 |                0 |            0 |           0 |
-|   200 |                0 |            0 |           0 |
-|   500 |                0 |            0 |           0 |
-|  1000 |                0 |         0.22 |        0.18 |
-|  2000 |                0 |         0.34 |         0.3 |
-|  5000 |                0 |         1.17 |        1.03 |
-| 10000 |                0 |         1.77 |        1.56 |
-| 20000 |                0 |         3.42 |        2.97 |
 
 #+name: time-list-subcell
 #+header: :results output raw
